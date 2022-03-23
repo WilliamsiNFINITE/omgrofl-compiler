@@ -12,6 +12,8 @@ can be found here: http://esolangs.org/wiki/Omgrofl
 
 How it works
 ------------
+First we have to read the code and create lexems. That's the job of the <b>lexer</b>.
+By reading the code analyzing it, we can then use the parser to create an Abstract Syntax Tree.
 
 
 
