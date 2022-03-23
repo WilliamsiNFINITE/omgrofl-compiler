@@ -2,11 +2,7 @@ import re
 import sys
 
 regexExpressions = [
-    (r'[ \n\t]+', None),
-    (r'#[^\n]*', None),
-    (r'[l]o+[l]\b', 'IDENTIFIER'),
-    (r'[a-zA-Z0-9]\w*', 'COMMENT'),
-    (r'[0-9]', 'DIGIT'),
+
 
     (r'\/\b', 'SLASH'),
     (r'\\\b', 'BACKSLASH'),
@@ -46,6 +42,11 @@ regexExpressions = [
     (r'haxor\b', 'HAXOR'),
     (r'tldr\b', 'TLDR'),
 
+    (r'[ \n\t]+', None),
+    (r'#[^\n]*', None),
+    (r'[l]o+[l]\b', 'IDENTIFIER'),
+    (r'[a-zA-Z0-9]\D+\w*', 'COMMENT'),
+    (r'[0-9]', 'DIGIT'),
 ]
 
 
@@ -79,7 +80,7 @@ class Lexer:
                         if tag:
                             token = Token(tag, data, [lineNumber, position])
                             self.tokens.append(token)
-                            print("token value = " + str(token.value))
+                            print("token tag = " + str(token.tag))
                         break
                 if not match:
                     print(position)
