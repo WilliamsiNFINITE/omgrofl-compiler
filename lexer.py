@@ -50,7 +50,7 @@ regexExpressions = [
 ]
 
 
-class Token:
+class Lexem:
 
     def __init__(self, tag, value, position):
         self.tag = tag
@@ -61,7 +61,7 @@ class Token:
 class Lexer:
 
     def __init__(self):
-        self.tokens = []
+        self.lexems = []
 
     def lex(self, inputText):
 
@@ -71,16 +71,16 @@ class Lexer:
             position = 0
             while position < len(line):
                 match = None
-                for tokenRegex in regexExpressions:
-                    pattern, tag = tokenRegex
+                for lexemRegex in regexExpressions:
+                    pattern, tag = lexemRegex
                     regex = re.compile(pattern)
                     match = regex.match(line, position)
                     if match:
                         data = match.group(0)
                         if tag:
-                            token = Token(tag, data, [lineNumber, position])
-                            self.tokens.append(token)
-                            print("token tag = " + str(token.tag))
+                            lexem = Lexem(tag, data, [lineNumber, position])
+                            self.lexems.append(lexem)
+                            print("lexem tag = " + str(lexem.tag))
                         break
                 if not match:
                     print(position)
@@ -90,14 +90,6 @@ class Lexer:
                 else:
                     position = match.end(0)
         print("lexer: analysis successful!")
-        return self.tokens
+        return self.lexems
 
 
-inputText = open("exemples/example").readlines()
-A = Lexer()
-B = A.lex(inputText)
-# print(B)
-print('done')
-# print(B)
-#
-# print([B[i].tag for i in range(6)])
