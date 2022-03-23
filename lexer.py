@@ -33,11 +33,11 @@ regexExpressions = [
     (r'liek\b', 'EQUAL'),
     (r'2\b', 'TWO'),
     (r'afk\b', 'AFK'),
-    (r'w00t\b', 'W00T'),
     (r'lmao\b', 'LMAO'),
     (r'roflmao\b', 'ROFLMAO'),
     (r'rofl\b', 'ROFL'),
     (r'n00b\b', 'N00B'),
+    (r'nope\b', 'NOPE'),
     (r'l33t\b', 'L33T'),
     (r'haxor\b', 'HAXOR'),
     (r'tldr\b', 'TLDR'),
@@ -45,7 +45,7 @@ regexExpressions = [
     (r'[ \n\t]+', None),
     (r'#[^\n]*', None),
     (r'[l]o+[l]\b', 'IDENTIFIER'),
-    (r'[a-zA-Z0-9]\D+\w*', 'COMMENT'),
+    (r'w00t [\s\S]*\n', 'COMMENT'),
     (r'[0-9]', 'DIGIT'),
 ]
 

@@ -2,7 +2,7 @@ import re
 import sys
 
 from lexer import Lexer
-from parser import Parser
+# from parser import Parser
 
 regexExpressions = [
 
@@ -56,8 +56,8 @@ regexExpressions = [
 inputText = open("examples/example").readlines()
 A = Lexer()
 B = A.lex(inputText)
-
-C = Parser()
+#
+# C = Parser()
 
 
 
