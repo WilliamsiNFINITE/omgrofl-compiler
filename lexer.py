@@ -73,7 +73,7 @@ class Lexer:
         return self.tokens
 
 
-inputText = open("example").readlines()
+inputText = open("exemples/example").readlines()
 A = Lexer()
 B = A.lex(inputText)
 # print(B)
