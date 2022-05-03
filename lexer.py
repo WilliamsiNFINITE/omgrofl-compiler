@@ -2,8 +2,6 @@ import re
 import sys
 
 regexExpressions = [
-
-
     (r'\/\b', 'SLASH'),
     (r'\\\b', 'BACKSLASH'),
     (r'\?\b', 'ASKPOINT'),
@@ -35,6 +33,7 @@ regexExpressions = [
     (r'afk\b', 'AFK'),
     (r'lmao\b', 'LMAO'),
     (r'roflmao\b', 'ROFLMAO'),
+    (r'to /dev/null\b', 'TODEVNULL'),
     (r'rofl\b', 'ROFL'),
     (r'n00b\b', 'N00B'),
     (r'nope\b', 'NOPE'),
@@ -47,6 +46,7 @@ regexExpressions = [
     (r'[l]o+[l]\b', 'IDENTIFIER'),
     (r'w00t [\s\S]*\n', 'COMMENT'),
     (r'[0-9]', 'DIGIT'),
+    (r'[0-9]+', 'NUMBER'),
 ]
 
 
@@ -80,16 +80,20 @@ class Lexer:
                         if tag:
                             lexem = Lexem(tag, data, [lineNumber, position])
                             self.lexems.append(lexem)
-                            print("lexem tag = " + str(lexem.tag))
+                            # print("lexem tag = " + str(lexem.tag))
                         break
                 if not match:
-                    print(position)
-                    print(inputText[position])
+                    print("pos : ",position)
+                    print("input_pos : " ,inputText[position])
                     print("no match")
                     sys.exit(1)
                 else:
                     position = match.end(0)
         print("lexer: analysis successful!")
         return self.lexems
+
+
+
+
 
 
