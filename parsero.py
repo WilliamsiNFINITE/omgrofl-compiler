@@ -9,30 +9,29 @@ class ProgramNode:
     AST du programme
     '''
 
-    def __int__(self):
-        self.statements = None
+    def __init__(self):
+        self.statements = []
 
     def __str__(self):
-
-        return self.statements
+        return [self.statements[i].__str__() for i in range(len(self.statements))].__str__()
 
 
 
 class StatementNode:
 
-    def __int__(self):
+    def __init__(self):
         self.condition = None
         self.expression = None
 
     def __str__(self):
 
-        return self.conditon, self.expression
+        return self.expression.__str__()
 
 
 
 class ExpressionNode:
 
-    def __int__(self):
+    def __init__(self):
         self.type = None
         self.value = None
         self.lhs = None
@@ -40,24 +39,24 @@ class ExpressionNode:
 
     def __str__(self):
 
-        return self.type.name, self.value
+        return self.value.__str__()
 
 
 
 class NumberNode:
 
-    def __int__(self):
+    def __init__(self):
         self.name = "Number"
         self.value = None
 
     def __str__(self):
 
-        return self.name, self.value
+        return self.name.__str__(), self.value.__str__()
 
 
 class IdentifierNode:
 
-    def __int__(self):
+    def __init__(self):
         self.name = "Identifier"
         self.value = None
 
@@ -68,13 +67,13 @@ class IdentifierNode:
 
 class ConditionNode:
 
-    def __int__(self):
+    def __init__(self):
         self.type = None
 
 
     def __str__(self):
 
-        return self.type
+        return self.type.__str__()
 
 
 
@@ -87,7 +86,7 @@ class UnaryNode:
 
 class Parser:
 
-    def __int__(self):
+    def __init__(self):
         self.test = []
 
 
@@ -125,7 +124,8 @@ class Parser:
         if next_lexem.tag == tag:
             return self.accept()
         else:
-            self.error('Expected {}, got {} instead'.format(tag, next_lexem.tag))
+            # self.error('Expected {}, got {} instead'.format(tag, next_lexem.tag))
+            return None
 
 
     def accept(self):
@@ -173,6 +173,7 @@ class Parser:
         Parses an statement that looks like:
             Identifier, '=', Expression ';'
         '''
+        print('parsing statement')
         statement_node = StatementNode()
         # statement_node.condition = self.parse_condition()
         # self.expect('ASSIGN')
@@ -189,12 +190,18 @@ class Parser:
 
             Unary, {[ "/" | "+" | "-" | "*" ], Expression}
         '''
+        print('parsing expression')
+
         expression_node = ExpressionNode()
 
         if self.peek().tag == 'WHILE':
             expression_node.type = self.accept()
             #expect(TLDR) to break the loop
             #expect(BRB to close the loop)
+
+            token = self.expect('CONDITION')
+            expression_node.expect = token.value
+            return expression_node
 
         elif self.peek().tag == "FOR":
             expression_node.type = self.accept()
@@ -205,14 +212,33 @@ class Parser:
             expression_node.type = self.accept()
             # expect(identifier)
 
+
+        elif self.peek().tag == "IZ":
+            expression_node.type = self.accept()
+            expression_node.value = expression_node.type.value
+            print('dans le IZ',expression_node.type.value)
+            if (self.expect('NUMBER') != None) :
+                token = self.expect('NUMBER')
+                # expression_node.type = self.accept()
+            else :
+                token = self.expect('IDENTIFIER')
+                # expression_node.type = self.accept()
+
+            # expression_node.expect = token.value
+            return expression_node
+
+
+
         elif self.peek().tag == "IDENTIFIER":
+            expression_node.type = self.accept()
+            print('dans le IDENTIFIER',expression_node.type.value)
+
             # Il faut peek le token d'après pour savoir si c'est :
             # - Une affectation (lol iz 4)
             # - Une remise à zéro (lol to /dev/null\)
 
-
-
         else:
+            print('self.peek().tag', self.peek().tag)
             self.error("Missing operator in expression.")
             expression_node.rhs = self.parse_expression()
 
