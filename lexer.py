@@ -25,6 +25,7 @@ regexExpressions = [
     (r'\b4\b', 'FOR'),
     (r'wtf\b', 'IF'),
     (r'rtfm\b', 'WHILE'),
+    (r'rtfm', 'WHILE'),
     (r'stfu\b', 'STOP'),
     (r'stfw\b', 'STFW'),
     (r'iz\b', 'IZ'),
@@ -47,7 +48,6 @@ regexExpressions = [
     (r'#[^\n]*', None),
     (r'[l]o+[l]\b', 'IDENTIFIER'),
     (r'w00t [\s\S]*\n', 'COMMENT'),
-    (r'[0-9]', 'DIGIT'),
     (r'[0-9]+', 'NUMBER'),
 ]
 

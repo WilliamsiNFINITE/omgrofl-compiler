@@ -36,7 +36,7 @@ class StatementNode:
 
 
 
-class ExpressionNode:
+class AssignmentNode:
 
     def __init__(self):
         self.operator = None
@@ -46,13 +46,37 @@ class ExpressionNode:
     def __str__(self):
         if self.operator != None:
             return 2*indent + "{Expression : \n" + \
-                            3*indent + "Left :  {}".format(self.lhs.__str__()) + "\n" +\
-                            3*indent + "Operator : {}".format(self.operator.tag) + "\n" +\
-                            3*indent + "Right : {}".format(self.rhs.__str__()) + "\n" +\
-                    2*indent +"}\n"
-        else :
+                   3*indent + "Left :  {}".format(self.lhs.__str__()) + "\n" +\
+                   3*indent + "Operator : {}".format(self.operator.tag) + "\n" +\
+                   3*indent + "Right : {}".format(self.rhs.__str__()) + "\n" +\
+                   2*indent + "}\n"
+
+        else:
             return self.lhs.__str__()
 
+class WhileNode:
+
+    def __init__(self):
+        self.operator = None
+
+    def __str__(self):
+        return 2 * indent + "{Loop : \n" + \
+               3 * indent + "Operator : {}".format(self.operator.tag) + "\n" + \
+               2 * indent + "}\n"
+
+
+class ForNode:
+    def __init__(self):
+        self.variable = None
+        self.initial_value = None
+        self.end_value = None
+
+    def __str__(self):
+        return 2 * indent + "{Loop : \n" + \
+               3 * indent + "Variable :  {}".format(self.variable.tag) + "\n" + \
+               3 * indent + "Initial Value : {}".format(self.initial_value.tag) + "\n" + \
+               3 * indent + "Ending Value : {}".format(self.end_value.tag) + "\n" +\
+               2 * indent + "}\n"
 
 
 class NumberNode:
@@ -60,11 +84,6 @@ class NumberNode:
     def __init__(self):
         self.tag = "NUMBER"
         self.value = None
-    #
-    # def __str__(self):
-    #
-    #     return "Number"
-    #
 
 class IdentifierNode:
 
@@ -72,23 +91,14 @@ class IdentifierNode:
         self.tag = "IDENTIFIER"
         self.value = None
 
-    # def __str__(self):
-    #
-    #     return "Identifier"
-    #
-    #
-
-
 class UnaryNode:
 
     def __init__(self):
-        self.value = 0
+        self.value = None
 
     def __str__(self):
 
         return self.value.tag
-
-
 
 
 class Parser:
@@ -133,6 +143,7 @@ class Parser:
             return self.accept()
         else:
             # self.error('Expected {}, got {} instead'.format(tag, next_lexem.tag))
+            print("NON'", tag, next_lexem.tag)
             return None
 
 
@@ -189,17 +200,11 @@ class Parser:
         print('parsing statement')
 
         statement_node = StatementNode()
-        # statement_node.expression = self.parse_expression()
+        # statement_node.expression = self.parse_assignment()
         # self.expect('TERMINATOR')
 
-
-
-
-
-
-
         if self.peek().tag == 'WHILE':
-            statement_node.expression.append(self.accept())
+            statement_node.expression.append(self.parse_while())
             statement_node.loop_counter += 1
             statement_node.loop_breaker_needed += 1
             # expect(TLDR) to break the loop
@@ -207,48 +212,40 @@ class Parser:
 
         elif self.peek().tag == "FOR":
             statement_node.expression.append(self.parse_for())
+            statement_node.loop_counter += 1
+            statement_node.loop_breaker_needed += 1
 
         elif self.peek().tag in ["STFW", "ROFL", "N00B", "L33T", "HAXOR", "AFK", "LMAO", "ROFLMAO"]:
             statement_node.expression.append(self.parse_other())
             # expect(identifier)
 
         elif self.peek().tag == "IDENTIFIER":
-            statement_node.expression.append( self.parse_expression())
+            statement_node.expression.append( self.parse_assignment())
+
+        else:
+            self.error("Synthax error")
 
         return statement_node
 
 
 
 
-    def parse_expression(self):
+    def parse_assignment(self):
         '''
         Parses an expression that looks like:
 
             Unary, {[ "/" | "+" | "-" | "*" ], Expression}
         '''
-        print('parsing expression')
-        expression_node = ExpressionNode()
+        print('parsing assignment')
+        expression_node = AssignmentNode()
         expression_node.lhs,unary_lign = self.parse_unary()
         # print('xpression_node.lhs.value.name',expression_node.lhs.value.name)
 
         # To check the type of the expression, we look for a ';' after the first identifier or number
-
-        # #D'abord, on regarde quelle est le nombre de lexeme de la ligne
-        # line_number = self.peek().position[0]
-        # index = 1
-        # self.accept()
-        # if self.peek(index).position[0] == line_number:
-        #     index+=1
-        #     print('index',index)
-        #
-
-
         if not self.peek().tag == 'TERMINATOR':
-
-        # if (self.peek() != None) and (unary_lign == self.peek().position[0]): #si c'est dans la meme ligne
             # Binary operation so operator and another expression
             if self.peek().tag in ['IZ', 'TODEVNULL']:
-                # - Une affectation (lol iz 4)
+                # - Une assignment (lol iz 4)
                 # - Une remise à zéro (lol to /dev/null\)
                 expression_node.operator = self.accept()
             else:
@@ -257,9 +254,43 @@ class Parser:
         else :
             self.accept()
             return expression_node
-        expression_node.rhs = self.parse_expression()
+        expression_node.rhs = self.parse_assignment()
 
         return expression_node
+
+    def parse_for(self):
+
+        print('parsing for')
+        for_node = ForNode()
+        token = self.expect('FOR')
+        token = self.expect('IDENTIFIER'); for_node.variable = token
+        token = self.expect('IZ')
+        #INITIAL
+        if self.peek().tag in ['IDENTIFIER', 'NUMBER']:
+            for_node.initial_value = self.accept()
+        else:
+            self.error('Expected IDENTIFIER or NUMBER, got {} instead'.format(self.peek().tag))
+
+        token = self.expect('TWO')
+        #FINAL
+        if self.peek().tag in ['IDENTIFIER', 'NUMBER']:
+            for_node.end_value = self.accept()
+        else:
+            self.error('Expected IDENTIFIER or NUMBER, got {} instead'.format(self.peek().tag))
+
+        return for_node
+
+    def parse_while(self):
+        '''
+        Parses an expression that looks like:
+
+            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+        '''
+        print('parsing while')
+        while_node = WhileNode()
+        while_node.operator = self.accept()
+        return while_node
+
 
 
     def parse_unary(self):
@@ -274,6 +305,7 @@ class Parser:
             elif self.peek().tag == 'NUMBER':
                 unary_node.value, unary_lign = self.parse_number()
             else:
+                print('voila pourquoi :', self.peek().tag)
                 self.error("Unary is either identifier or number")
         else:
             print('No more peeking nbecause no more token')
