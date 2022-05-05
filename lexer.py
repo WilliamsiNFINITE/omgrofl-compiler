@@ -2,6 +2,8 @@ import re
 import sys
 
 regexExpressions = [
+    (r'w00t [\s\S]*\n', 'COMMENT'),
+
     (r'\/\b', 'SLASH'),
     (r'\\\b', 'BACKSLASH'),
     (r'\?\b', 'ASKPOINT'),
@@ -20,10 +22,11 @@ regexExpressions = [
     (r'\>\b', 'GREATERTHAN'),
     (r'\<\b', 'LOWERTHAN'),
     (r'\;', 'TERMINATOR'),
+    (r'\\n', 'TERMINATORBIS'),
 
 
     (r'\b4\b', 'FOR'),
-    (r'wtf\b', 'IF'),
+    (r'wtf\b', 'WTF'),
     (r'rtfm\b', 'WHILE'),
     (r'rtfm', 'WHILE'),
     (r'stfu\b', 'STFU'),
@@ -47,7 +50,6 @@ regexExpressions = [
     (r'[ \n\t]+', None),
     (r'#[^\n]*', None),
     (r'[l]o+[l]\b', 'IDENTIFIER'),
-    (r'w00t [\s\S]*\n', 'COMMENT'),
     (r'[0-9]+', 'NUMBER'),
 ]
 
@@ -91,11 +93,7 @@ class Lexer:
                     sys.exit(1)
                 else:
                     position = match.end(0)
+
+            # self.lexems.append(Lexem("TERMINATORBIS","\n",[lineNumber,position]))
         print("lexer: analysis successful!")
         return self.lexems
-
-
-
-
-
-

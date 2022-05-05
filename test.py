@@ -7,7 +7,7 @@ from parsero import *
 inputText = open("examples/example_basic").readlines()
 lexer = Lexer()
 lexems = lexer.lex(inputText)
-print(lexems[10].value, lexems[10].tag, lexems[10].position[0])
+print(lexems[9].value, lexems[9].tag, lexems[9].position[0])
 print('done')
 
 
