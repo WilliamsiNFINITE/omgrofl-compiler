@@ -276,23 +276,27 @@ class Parser:
             Unary, iz, Expression}
         '''
         expression_node = AssignmentNode()
-        expression_node.lhs,unary_lign = self.parse_unary()
-        # print('xpression_node.lhs.value.name',expression_node.lhs.value.name)
+        if self.peek().tag not in ["LIEK","UBER","NOPE"]:
+            expression_node.lhs,unary_lign = self.parse_unary()
+            # print('xpression_node.lhs.value.name',expression_node.lhs.value.name)
 
-        # To check the type of the expression, we look for a ';' after the first identifier or number
-        if not self.peek().tag == 'TERMINATOR':
-            # Binary operation so operator and another expression
-            if self.peek().tag in ['IZ', 'TODEVNULL']:
-                # - Une assignment (lol iz 4)
-                # - Une remise à zéro (lol to /dev/null\)
-                expression_node.operator = self.accept()
-            else:
-                self.error("Missing operator in expression.")
+            # To check the type of the expression, we look for a ';' after the first identifier or number
+            if not self.peek().tag == 'TERMINATOR':
+                # Binary operation so operator and another expression
+                if self.peek().tag in ['IZ', 'TODEVNULL']:
+                    # - Une assignment (lol iz 4)
+                    # - Une remise à zéro (lol to /dev/null\)
+                    expression_node.operator = self.accept()
+                else:
+                    self.error("Missing operator in expression.")
 
-        else :
-            self.accept()
-            return expression_node
-        expression_node.rhs = self.parse_assignment()
+            else :
+                self.accept()
+                return expression_node
+            expression_node.rhs = self.parse_assignment()
+        else:
+            expression_node.operator = self.accept()
+            expression_node.rhs = self.parse_assignment()
 
         return expression_node
 
