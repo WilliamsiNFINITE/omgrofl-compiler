@@ -19,6 +19,8 @@ regexExpressions = [
     (r'\#\b', 'HASHTAG'),
     (r'\>\b', 'GREATERTHAN'),
     (r'\<\b', 'LOWERTHAN'),
+    (r'\;', 'TERMINATOR'),
+
 
     (r'\b4\b', 'FOR'),
     (r'wtf\b', 'IF'),
