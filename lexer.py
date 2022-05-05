@@ -26,7 +26,7 @@ regexExpressions = [
     (r'wtf\b', 'IF'),
     (r'rtfm\b', 'WHILE'),
     (r'rtfm', 'WHILE'),
-    (r'stfu\b', 'STOP'),
+    (r'stfu\b', 'STFU'),
     (r'stfw\b', 'STFW'),
     (r'iz\b', 'IZ'),
     (r'brb\b', 'BRB'),

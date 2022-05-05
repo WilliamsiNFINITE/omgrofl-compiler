@@ -81,6 +81,18 @@ class WhileNode:
                2 * indent + "}\n"
 
 
+class StfuNode:
+
+    def __init__(self):
+        self.end = None
+
+    def __str__(self):
+        return 2 * indent + "{End of Program\n" + \
+               2 * indent + "}\n"
+
+
+
+
 class BrbNode:
 
     def __init__(self):
@@ -125,7 +137,7 @@ class UnaryNode:
     def __str__(self):
 
         return self.value.tag
-
+pass
 
 
 class Parser:
@@ -216,15 +228,8 @@ class Parser:
 
     def parse_statement(self):
         '''
-        Parses an statement that looks like:
-            Identifier, '=', Expression ';' // EXAMPLE
-
+        Parses a statement that represents a line
         '''
-        '''
-            Un statement correspond à une ligne donc 
-            on va déterminer quelle est l'expression de chaque ligne/statement
-        '''
-        print('parsing statement')
 
         statement_node = StatementNode()
         # statement_node.expression = self.parse_assignment()
@@ -244,13 +249,18 @@ class Parser:
 
         elif self.peek().tag in ["STFW", "ROFL", "N00B", "L33T", "HAXOR", "AFK", "LMAO", "ROFLMAO"]:
             statement_node.expression.append(self.parse_other())
-            # expect(identifier)
 
         elif self.peek().tag == "IDENTIFIER":
             statement_node.expression.append( self.parse_assignment())
 
         elif self.peek().tag == "BRB":
             statement_node.expression.append( self.parse_brb())
+
+        elif self.peek().tag == "STFU":
+            statement_node.expression.append( self.parse_stfu())
+
+        elif self.peek().tag == "TLDR":
+            statement_node.expression.append( self.parse_stfu())
 
         else:
             self.error("Synthax error")
@@ -263,10 +273,8 @@ class Parser:
     def parse_assignment(self):
         '''
         Parses an expression that looks like:
-
-            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+            Unary, iz, Expression}
         '''
-        print('parsing assignment')
         expression_node = AssignmentNode()
         expression_node.lhs,unary_lign = self.parse_unary()
         # print('xpression_node.lhs.value.name',expression_node.lhs.value.name)
@@ -289,8 +297,10 @@ class Parser:
         return expression_node
 
     def parse_for(self):
-
-        print('parsing for')
+        '''
+        Parses an expression that looks like:
+            4, Identifier, iz, Identifier | Number, 2, Identifier | Number
+        '''
         for_node = ForNode()
         token = self.expect('FOR')
         token = self.expect('IDENTIFIER'); for_node.variable = token
@@ -313,10 +323,8 @@ class Parser:
     def parse_while(self):
         '''
         Parses an expression that looks like:
-
-            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+            rtfm
         '''
-        print('parsing while')
         while_node = WhileNode()
         while_node.operator = self.accept()
         return while_node
@@ -324,28 +332,30 @@ class Parser:
     def parse_brb(self):
         '''
         Parses an expression that looks like:
-
-            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+            brb
         '''
-        print('parsing brb')
         brb_node = BrbNode()
         brb_node.loop = self.accept()
         return brb_node
 
+    def parse_stfu(self):
+        '''
+        Parses an expression that looks like:
+            stfu
+        '''
+        stfu_node = StfuNode()
+        stfu_node.end = self.accept()
+        return stfu_node
+
     def parse_other(self):
         '''
         Parses an expression that looks like:
-
-            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+            Operator, Identifier
         '''
-        print('parsing other')
         other_node = OtherNode()
         other_node.operator = self.accept()
         token = self.expect('IDENTIFIER'); other_node.variable = token
-
         return other_node
-
-
 
     def parse_unary(self):
         '''
@@ -368,14 +378,13 @@ class Parser:
     def parse_identifier(self):
         '''
         Parses an identifier that looks like:
-            Character, {Character | Digit}
+            l{o}l
         '''
 
         identifier_node = IdentifierNode()
         token = self.expect('IDENTIFIER')
         identifier_node.value = token.value
         return identifier_node, token.position[0]
-
 
     def parse_number(self):
         '''
