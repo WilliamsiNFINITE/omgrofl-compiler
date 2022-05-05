@@ -4,6 +4,8 @@ import sys
 from ast import *
 
 
+indent = "    "
+
 class ProgramNode:
     '''
     AST du programme
@@ -13,7 +15,10 @@ class ProgramNode:
         self.statements = []
 
     def __str__(self):
-        return [self.statements[i].__str__() for i in range(len(self.statements))].__str__()
+        string = ""
+        for i in range(len(self.statements)):
+            string += self.statements[i].__str__()
+        return "{Program : \n " + string + "\n}"
 
 
 
@@ -26,7 +31,8 @@ class StatementNode:
 
     def __str__(self):
 
-        return self.expression[0].__str__()
+        return 1*indent + "{Statement : \n " + self.expression[0].__str__() + "\n"+\
+               1*indent + "}\n"
 
 
 
@@ -39,7 +45,11 @@ class ExpressionNode:
 
     def __str__(self):
         if self.operator != None:
-            return "{} {} {}".format(self.lhs.__str__(),self.operator.tag,self.rhs.__str__())
+            return 2*indent + "{Expression : \n" + \
+                            3*indent + "Left :  {}".format(self.lhs.__str__()) + "\n" +\
+                            3*indent + "Operator : {}".format(self.operator.tag) + "\n" +\
+                            3*indent + "Right : {}".format(self.rhs.__str__()) + "\n" +\
+                    2*indent +"}\n"
         else :
             return self.lhs.__str__()
 

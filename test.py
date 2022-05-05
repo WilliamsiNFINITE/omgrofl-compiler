@@ -15,6 +15,6 @@ parseur = Parser()
 print('________________________________________ printing ast ________________________________________ ')
 ast = parseur.parse(lexems)
 
-print('ast',ast)
+print('ast \n ',ast)
 
 
