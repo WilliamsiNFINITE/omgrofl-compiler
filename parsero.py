@@ -54,6 +54,22 @@ class AssignmentNode:
         else:
             return self.lhs.__str__()
 
+class OtherNode:
+
+    def __init__(self):
+        self.operator = None
+        self.variable = None
+
+    def __str__(self):
+        if self.operator != None:
+            return 2*indent + "{Expression : \n" + \
+                   3*indent + "Operator : {}".format(self.operator.tag) + "\n" +\
+                   3*indent + "Variable : {}".format(self.variable.tag) + "\n" +\
+                   2*indent + "}\n"
+
+        else:
+            return self.lhs.__str__()
+
 class WhileNode:
 
     def __init__(self):
@@ -62,6 +78,16 @@ class WhileNode:
     def __str__(self):
         return 2 * indent + "{Loop : \n" + \
                3 * indent + "Operator : {}".format(self.operator.tag) + "\n" + \
+               2 * indent + "}\n"
+
+
+class BrbNode:
+
+    def __init__(self):
+        self.loop = None
+
+    def __str__(self):
+        return 2 * indent + "{End of loop\n" + \
                2 * indent + "}\n"
 
 
@@ -99,6 +125,7 @@ class UnaryNode:
     def __str__(self):
 
         return self.value.tag
+
 
 
 class Parser:
@@ -222,6 +249,9 @@ class Parser:
         elif self.peek().tag == "IDENTIFIER":
             statement_node.expression.append( self.parse_assignment())
 
+        elif self.peek().tag == "BRB":
+            statement_node.expression.append( self.parse_brb())
+
         else:
             self.error("Synthax error")
 
@@ -290,6 +320,30 @@ class Parser:
         while_node = WhileNode()
         while_node.operator = self.accept()
         return while_node
+
+    def parse_brb(self):
+        '''
+        Parses an expression that looks like:
+
+            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+        '''
+        print('parsing brb')
+        brb_node = BrbNode()
+        brb_node.loop = self.accept()
+        return brb_node
+
+    def parse_other(self):
+        '''
+        Parses an expression that looks like:
+
+            Unary, {[ "/" | "+" | "-" | "*" ], Expression}
+        '''
+        print('parsing other')
+        other_node = OtherNode()
+        other_node.operator = self.accept()
+        token = self.expect('IDENTIFIER'); other_node.variable = token
+
+        return other_node
 
 
 
