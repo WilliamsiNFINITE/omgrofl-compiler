@@ -2,20 +2,71 @@ import re
 import sys
 
 from lexer import Lexer
-from parsero import *
-# A = [1,2,3]
-# B = sum(A)
-# print('B',B)
+from parsero import Parser
+
+regexExpressions = [
+
+
+    (r'\/\b', 'SLASH'),
+    (r'\\\b', 'BACKSLASH'),
+    (r'\?\b', 'ASKPOINT'),
+    (r'\!\b', 'EXCPOINT'),
+    (r'\,\b', 'COMA'),
+    (r'\.\b', 'PERIOD'),
+    (r'\:\b', 'COLUMN'),
+    (r'\;\b', 'SEMICOLUMN'),
+    (r'\'\b', 'APOSTROPHE'),
+    (r'\"\b', 'QUOTE'),
+    (r'\-\b', 'SUB'),
+    (r'\+\b', 'ADD'),
+    (r'\_\b', 'UNDERSCORE'),
+    (r'\=\b', 'EQUAL'),
+    (r'\#\b', 'HASHTAG'),
+    (r'\>\b', 'GREATERTHAN'),
+    (r'\<\b', 'LOWERTHAN'),
+
+    (r'\b4\b', 'FOR'),
+    (r'wtf\b', 'IF'),
+    (r'rtfm\b', 'WHILE'),
+    (r'stfu\b', 'STOP'),
+    (r'stfw\b', 'STFW'),
+    (r'iz\b', 'IZ'),
+    (r'brb\b', 'BRB'),
+    (r'uber\b', 'GREATERTHAN'),
+    (r'liek\b', 'EQUAL'),
+    (r'2\b', 'TWO'),
+    (r'afk\b', 'AFK'),
+    (r'w00t\b', 'W00T'),
+    (r'lmao\b', 'LMAO'),
+    (r'roflmao\b', 'ROFLMAO'),
+    (r'rofl\b', 'ROFL'),
+    (r'n00b\b', 'N00B'),
+    (r'l33t\b', 'L33T'),
+    (r'haxor\b', 'HAXOR'),
+    (r'tldr\b', 'TLDR'),
+
+    (r'[ \n\t]+', None),
+    (r'#[^\n]*', None),
+    (r'[l]o+[l]\b', 'IDENTIFIER'),
+    (r'[a-zA-Z0-9]\D+\w*', 'COMMENT'),
+    (r'[0-9]', 'DIGIT'),
+]
+
+
 inputText = open("examples/example").readlines()
-lexer = Lexer()
-lexems = lexer.lex(inputText)
-# print(lexems[9].value, lexems[9].tag, lexems[9].position[0])
-# print('done')
+A = Lexer()
+B=A.lex(inputText)
+C = Parser()
 
 
-parseur = Parser()
-# print('________________________________________ printing ast ________________________________________ ')
-ast = parseur.parse(lexems)
-# print([ast.statements[i].loop_counter for i in range(len(ast.statements))])
-# print('ast \n ',ast)
 
+
+#print(A.lexems)
+print(B)
+print('done')
+# print(B)
+#
+print([B[i] for i in range(6)])
+
+program_node=C.parse(B)
+print(program_node)
