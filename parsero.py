@@ -99,15 +99,6 @@ class TldrNode:
         return 2 * indent + "{Break \n" + \
                2 * indent + "}\n"
 
-#
-# class TerminatorNode:
-#
-#     def __init__(self):
-#         self.terminator = None
-#
-#     def __str__(self):
-#         return ""
-#
 
 
 class BrbNode:
@@ -305,9 +296,6 @@ class Parser:
         elif self.peek().tag == "WTF":
             statement_node.expression.append( self.parse_wtf())
             statement_node.loop_counter += 1
-        #
-        # elif self.peek().tag == "TERMINATORBIS":
-        #     statement_node.expression.append( self.parse_terminator())
 
         else:
             self.error("Synthax error")
@@ -402,11 +390,8 @@ class Parser:
         Parses an expression that looks like:
             rtfm
         '''
-        # if not self.peek().tag == 'TERMINATORBIS':
         rtfm_node = RtfmNode()
         rtfm_node.operator = self.accept()
-        # else :
-        #     print("non mf")
         return rtfm_node
 
     def parse_brb(self):
@@ -435,15 +420,6 @@ class Parser:
         tldr_node = TldrNode()
         tldr_node.breaker = self.accept()
         return tldr_node
-    #
-    # def parse_terminator(self):
-    #     '''
-    #     Parses an expression that looks like:
-    #         tldr
-    #     '''
-    #     terminator_node = TerminatorNode()
-    #     terminator_node.terminator = self.accept()
-    #     return terminator_node
 
     def parse_other(self):
         '''
