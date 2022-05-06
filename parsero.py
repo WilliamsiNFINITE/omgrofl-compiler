@@ -280,30 +280,27 @@ class Parser:
             statement_node.expression.append(self.parse_other())
 
         elif self.peek().tag == "IDENTIFIER":
-            statement_node.expression.append( self.parse_assignment())
+            statement_node.expression.append(self.parse_assignment())
 
         elif self.peek().tag == "BRB":
-            statement_node.expression.append( self.parse_brb())
+            statement_node.expression.append(self.parse_brb())
             statement_node.loop_counter -= 1
 
         elif self.peek().tag == "STFU":
-            statement_node.expression.append( self.parse_stfu())
+            statement_node.expression.append(self.parse_stfu())
 
         elif self.peek().tag == "TLDR":
-            statement_node.expression.append( self.parse_tldr())
+            statement_node.expression.append(self.parse_tldr())
             statement_node.loop_breaker_needed -= 1
 
         elif self.peek().tag == "WTF":
-            statement_node.expression.append( self.parse_wtf())
+            statement_node.expression.append(self.parse_wtf())
             statement_node.loop_counter += 1
 
         else:
             self.error("Synthax error")
 
         return statement_node
-
-
-
 
     def parse_assignment(self):
         '''

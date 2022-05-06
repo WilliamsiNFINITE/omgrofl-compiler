@@ -61,6 +61,9 @@ class Lexem:
         self.value = value
         self.position = position
 
+    def __str__(self):
+        return("lexem de tag {} de valeur {} en pos {}".format(self.tag, self.value, self.position))
+
 
 class Lexer:
 
