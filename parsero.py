@@ -242,18 +242,19 @@ class Parser:
         self.remove_comments()
         program_node = self.parse_program() #ast
         open_loops = sum( [program_node.statements[i].loop_counter for i in range(len(program_node.statements))])
-        if open_loops != 0 :
+        if open_loops > 0 :
             if open_loops == 1: verb = 'is'
             else : verb = 'are'
-            print('WARNING : You have {} open loops ({} brb {} advised)'.format(open_loops, open_loops, verb))
+            print('WARNING : You have {} missing brb(brb are advised for your "4" and "rtfm" loops and "wtf" condition)'.format(open_loops))
         loop_breaker_needed = sum([program_node.statements[i].loop_breaker_needed for i in range(len(program_node.statements))])
-        if loop_breaker_needed != 0:
+        if loop_breaker_needed > 0:
             if loop_breaker_needed == 1:
                 verb = 'is'
             else:
                 verb = 'are'
             print("WARNING : You have {} rtfm loop that has not break. You're program will not end ({} tldr {} required to end the program)".format(loop_breaker_needed, loop_breaker_needed, verb))
 
+        print('parser: parsing done')
         return program_node
 
 
@@ -303,6 +304,7 @@ class Parser:
 
         elif self.peek().tag == "WTF":
             statement_node.expression.append( self.parse_wtf())
+            statement_node.loop_counter += 1
         #
         # elif self.peek().tag == "TERMINATORBIS":
         #     statement_node.expression.append( self.parse_terminator())
@@ -321,22 +323,16 @@ class Parser:
             Unary, iz, Expression}
         '''
         expression_node = AssignmentNode()
-        if self.peek().tag not in ["LIEK","UBER","NOPE"]:
+        if self.peek().tag not in ["LIEK","UBER","NOPE"]: # liek lol
             expression_node.lhs,unary_lign = self.parse_unary()
-            # print('xpression_node.lhs.value.name',expression_node.lhs.value.name)
 
-            # To check the type of the expression, we look for a ';' after the first identifier or number
-            if not self.peek().tag == 'TERMINATOR':
-                # Binary operation so operator and another expression
-                if self.peek().tag in ['IZ', 'TODEVNULL']:
-                    # - Une assignment (lol iz 4)
-                    # - Une remise à zéro (lol to /dev/null\)
+            if unary_lign == self.peek().position[0]: #Same ligne than next token
+                if self.peek().tag in ['IZ', 'TODEVNULL']: #assignment (lol iz 4) or zero (lol to /dev/null\)
                     expression_node.operator = self.accept()
                 else:
                     self.error("Missing operator in expression.")
 
             else :
-                self.accept()
                 return expression_node
             expression_node.rhs = self.parse_assignment()
         else:
