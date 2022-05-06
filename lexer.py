@@ -87,9 +87,7 @@ class Lexer:
                             # print("lexem tag = " + str(lexem.tag))
                         break
                 if not match:
-                    print("pos : ",position)
-                    print("input_pos : " ,inputText[position])
-                    print("no match")
+                    print("error in matching lexem at :", lineNumber, position)
                     sys.exit(1)
                 else:
                     position = match.end(0)
