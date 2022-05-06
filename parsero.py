@@ -252,7 +252,7 @@ class Parser:
                 verb = 'is'
             else:
                 verb = 'are'
-            print("WARNING : You have {} rtfm loop that has not break. You're program will not end ({} stfu {} required to end the program)".format(loop_breaker_needed, loop_breaker_needed, verb))
+            print("WARNING : You have {} rtfm loop that has not break. You're program will not end ({} tldr {} required to end the program)".format(loop_breaker_needed, loop_breaker_needed, verb))
 
         return program_node
 
