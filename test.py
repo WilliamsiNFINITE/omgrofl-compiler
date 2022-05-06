@@ -3,7 +3,9 @@ import sys
 
 from lexer import Lexer
 from parsero import *
-
+A = [1,2,3]
+B = sum(A)
+print('B',B)
 inputText = open("examples/example_basic").readlines()
 lexer = Lexer()
 lexems = lexer.lex(inputText)

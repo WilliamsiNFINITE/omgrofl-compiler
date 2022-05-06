@@ -99,15 +99,15 @@ class TldrNode:
         return 2 * indent + "{Break \n" + \
                2 * indent + "}\n"
 
-
-class TerminatorNode:
-
-    def __init__(self):
-        self.terminator = None
-
-    def __str__(self):
-        return ""
-
+#
+# class TerminatorNode:
+#
+#     def __init__(self):
+#         self.terminator = None
+#
+#     def __str__(self):
+#         return ""
+#
 
 
 class BrbNode:
@@ -128,7 +128,7 @@ class ForNode:
 
     def __str__(self):
         return 2 * indent + "{Loop : \n" + \
-               3 * indent + "Variable :  {}".format(self.variable.tag) + "\n" + \
+               3 * indent + "Variable : {}".format(self.variable.tag) + "\n" + \
                3 * indent + "Initial Value : {}".format(self.initial_value.tag) + "\n" + \
                3 * indent + "Ending Value : {}".format(self.end_value.tag) + "\n" +\
                2 * indent + "}\n"
@@ -142,7 +142,7 @@ class WtfNode:
 
     def __str__(self):
         return 2 * indent + "{Test : \n" + \
-               3 * indent + "Variable :  {}".format(self.variable_1.tag) + "\n" + \
+               3 * indent + "Variable : {}".format(self.variable_1.tag) + "\n" + \
                3 * indent + "Operator : {}".format(self.operator.tag) + "\n" + \
                3 * indent + "Variable : {}".format(self.variable_2.tag) + "\n" +\
                2 * indent + "}\n"
@@ -240,8 +240,21 @@ class Parser:
         '''
         self.lexems = lexems
         self.remove_comments()
-        ast = self.parse_program()
-        return ast
+        program_node = self.parse_program() #ast
+        open_loops = sum( [program_node.statements[i].loop_counter for i in range(len(program_node.statements))])
+        if open_loops != 0 :
+            if open_loops == 1: verb = 'is'
+            else : verb = 'are'
+            print('WARNING : You have {} open loops ({} brb {} advised)'.format(open_loops, open_loops, verb))
+        loop_breaker_needed = sum([program_node.statements[i].loop_breaker_needed for i in range(len(program_node.statements))])
+        if loop_breaker_needed != 0:
+            if loop_breaker_needed == 1:
+                verb = 'is'
+            else:
+                verb = 'are'
+            print("WARNING : You have {} rtfm loop that has not break. You're program will not end ({} stfu {} required to end the program)".format(loop_breaker_needed, loop_breaker_needed, verb))
+
+        return program_node
 
 
     def parse_program(self):
@@ -259,22 +272,17 @@ class Parser:
         '''
         Parses a statement that represents a line
         '''
-        print("parse statement")
         statement_node = StatementNode()
-        # statement_node.expression = self.parse_assignment()
-        # self.expect('TERMINATOR')
+
 
         if self.peek().tag == 'WHILE':
             statement_node.expression.append(self.parse_rtfm())
             statement_node.loop_counter += 1
             statement_node.loop_breaker_needed += 1
-            # expect(TLDR) to break the loop
-            # expect(BRB to close the loop)
 
         elif self.peek().tag == "FOR":
             statement_node.expression.append(self.parse_for())
             statement_node.loop_counter += 1
-            statement_node.loop_breaker_needed += 1
 
         elif self.peek().tag in ["STFW", "ROFL", "N00B", "L33T", "HAXOR", "AFK", "LMAO", "ROFLMAO"]:
             statement_node.expression.append(self.parse_other())
@@ -284,18 +292,20 @@ class Parser:
 
         elif self.peek().tag == "BRB":
             statement_node.expression.append( self.parse_brb())
+            statement_node.loop_counter -= 1
 
         elif self.peek().tag == "STFU":
             statement_node.expression.append( self.parse_stfu())
 
         elif self.peek().tag == "TLDR":
             statement_node.expression.append( self.parse_tldr())
+            statement_node.loop_breaker_needed -= 1
 
         elif self.peek().tag == "WTF":
             statement_node.expression.append( self.parse_wtf())
-
-        elif self.peek().tag == "TERMINATORBIS":
-            statement_node.expression.append( self.parse_terminator())
+        #
+        # elif self.peek().tag == "TERMINATORBIS":
+        #     statement_node.expression.append( self.parse_terminator())
 
         else:
             self.error("Synthax error")
@@ -370,32 +380,24 @@ class Parser:
         token = self.expect('IZ') ; wtf_node.operator = token
 
 
-        if self.peek().tag in ['IDENTIFIER', 'NUMBER']:
-            wtf_node.variable_2 = self.accept()
-        elif self.peek().tag == "NOPE":
+        if self.peek().tag == "NOPE":
             if self.peek(2).tag in ["LIEK", "UBER"]:
                 wtf_node.operator = Lexem("IZ NOPE {}".format(self.peek(2).tag),"iz nope {}".format(self.peek(2).value), token.position)
                 self.accept()
+                self.accept() #2 tokens to accept : NOPE LIEK or NOPE UBER
+
             else:
-                print('here')
                 wtf_node.operator = Lexem("IZ NOPE","iz nope", token.position)
-                self.lexems.pop(0)
+                self.accept()
 
         elif self.peek().tag in ["LIEK", "UBER"]:
-            wtf_node.operator = Lexem("IZ {}".format(self.peek(2).tag),"iz {}".format(self.peek(2).value), token.position)
+            wtf_node.operator = Lexem("IZ {}".format(self.peek().tag),"iz {}".format(self.peek().value), token.position)
             self.accept()
+
+        if self.peek().tag in ['IDENTIFIER', 'NUMBER']:
+            wtf_node.variable_2 = self.accept()
         else:
             self.error('Expected IDENTIFIER or NUMBER, got {} instead'.format(self.peek().tag))
-
-        # else:
-        #     self.error('Expected IDENTIFIER or NUMBER, got {} instead'.format(self.peek().tag))
-        #
-        # token = self.expect('TWO')
-        # #FINAL
-        # if self.peek().tag in ['IDENTIFIER', 'NUMBER']:
-        #     wtf_node.end_value = self.accept()
-        # else:
-        #     self.error('Expected IDENTIFIER or NUMBER, got {} instead'.format(self.peek().tag))
 
         return wtf_node
 
@@ -437,15 +439,15 @@ class Parser:
         tldr_node = TldrNode()
         tldr_node.breaker = self.accept()
         return tldr_node
-
-    def parse_terminator(self):
-        '''
-        Parses an expression that looks like:
-            tldr
-        '''
-        terminator_node = TerminatorNode()
-        terminator_node.terminator = self.accept()
-        return terminator_node
+    #
+    # def parse_terminator(self):
+    #     '''
+    #     Parses an expression that looks like:
+    #         tldr
+    #     '''
+    #     terminator_node = TerminatorNode()
+    #     terminator_node.terminator = self.accept()
+    #     return terminator_node
 
     def parse_other(self):
         '''
