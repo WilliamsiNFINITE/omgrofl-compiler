@@ -56,7 +56,7 @@ regexExpressions = [
 inputText = open("examples/example").readlines()
 A = Lexer()
 B=A.lex(inputText)
-# C = Parser()
+C = Parser()
 
 
 
@@ -67,3 +67,6 @@ print('done')
 # print(B)
 #
 print([B[i] for i in range(6)])
+
+program_node=C.parse(B)
+print(program_node)
