@@ -174,14 +174,19 @@ class IdentifierNode:
         self.tag = "IDENTIFIER"
         self.value = None
 
+    def accept(self,visitor):
+        visitor.visit_identifier_node(self)
+
 class UnaryNode:
 
     def __init__(self):
         self.value = None
 
     def __str__(self):
-
         return self.value.tag
+
+    def accept(self,visitor):
+        visitor.visit_unary_node(self)
 
 class Parser:
 

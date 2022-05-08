@@ -45,3 +45,10 @@ class Visitor:
     def visit_number_node(self,number_node):
         number_node.tag.accept(self)
         number_node.value.accept(self)
+
+    def visit_identifier_node(self,identifier_node):
+        identifier_node.tag.accept(self)
+        identifier_node.value.accept(self)
+
+    def visit_unary_node(self,unary_node):
+        unary_node.value.accept(self)
