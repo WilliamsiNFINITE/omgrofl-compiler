@@ -20,6 +20,10 @@ class ProgramNode:
             string += self.statements[i].__str__()
         return "{Program : \n " + string + "\n}"
 
+    def accept(self,visitor):
+        visitor.visit_program_node(self)
+
+
 
 class StatementNode:
 
@@ -33,7 +37,8 @@ class StatementNode:
         return 1*indent + "{Statement : \n " + self.expression[0].__str__() + "\n"+\
                1*indent + "}\n"
 
-
+    def accept(self,visitor):
+        visitor.visit_statement_node(self)
 
 class AssignmentNode:
 
@@ -52,6 +57,9 @@ class AssignmentNode:
 
         else:
             return self.lhs.__str__()
+
+    def accept(self,visitor):
+        visitor.visit_assignement_node(self)
 
 class OtherNode:
 
@@ -79,6 +87,8 @@ class RtfmNode:
                3 * indent + "Operator : {}".format(self.operator.tag) + "\n" + \
                2 * indent + "}\n"
 
+    def accept(self,visitor):
+        visitor.visit_rtfm_node(self)
 
 class StfuNode:
 
@@ -89,6 +99,8 @@ class StfuNode:
         return 2 * indent + "{End of Program\n" + \
                2 * indent + "}\n"
 
+    def accept(self,visitor):
+        visitor.visit_statement_node(self)
 
 class TldrNode:
 
@@ -99,7 +111,8 @@ class TldrNode:
         return 2 * indent + "{Break \n" + \
                2 * indent + "}\n"
 
-
+    def accept(self,visitor):
+        visitor.visit_tdlr_node(self)
 
 class BrbNode:
 
@@ -110,6 +123,8 @@ class BrbNode:
         return 2 * indent + "{End of loop\n" + \
                2 * indent + "}\n"
 
+    def accept(self,visitor):
+        visitor.visit_brb_node(self)
 
 class ForNode:
     def __init__(self):
@@ -123,6 +138,9 @@ class ForNode:
                3 * indent + "Initial Value : {}".format(self.initial_value.tag) + "\n" + \
                3 * indent + "Ending Value : {}".format(self.end_value.tag) + "\n" +\
                2 * indent + "}\n"
+
+    def accept(self,visitor):
+        visitor.visit_for_node(self)
 
 
 class WtfNode:
@@ -138,12 +156,17 @@ class WtfNode:
                3 * indent + "Variable : {}".format(self.variable_2.tag) + "\n" +\
                2 * indent + "}\n"
 
+    def accpet(self,visitor):
+        visitor.visit_wtf_node(self)
 
 class NumberNode:
 
     def __init__(self):
         self.tag = "NUMBER"
         self.value = None
+
+    def accept(self,visitor):
+        visitor.visit_number_node(self)
 
 class IdentifierNode:
 
