@@ -20,15 +20,9 @@ By reading the code analyzing it, we can then use the parser to create an Abstra
 Getting started
 ---------------
 
-To compile, run these commands on the command line:
-```
-
-```
-
 Run an example:
-```
 
-```
+You can run test.py and change the example file at line 56
 
 Currently supported statements
 ------------------------------
@@ -45,8 +39,3 @@ Currently supported statements
 + Incrementing / decrementing (lmao/roflmao *variable*)
 + Conditions (wtf *variable/value* iz (nope) liek/uber *variable/value* ... brb)
 + Stack/Queue (n00b/l33t/haxor *variable*)
-
-Implementation details
-----------------------
-
-
